@@ -5,21 +5,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SiteCraft AI</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111827;
+      color: #f9fafb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 700px;
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin: 20px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <h1>🛠️ SiteCraft</h1>
     <p>Your personal website generator using AI.</p>
 
-    <textarea id="prompt" placeholder="Enter a description for your website..."></textarea>
-    <button id="generateBtn">Generate Website</button>
+    <!-- Corrected ID -->
+    <textarea id="userInput" placeholder="Enter a description for your website..."></textarea>
+    <button onclick="generateSite()">Generate Website</button>
 
-    <div id="outputContainer">
-      <h2>Generated HTML:</h2>
-      <pre id="output"></pre>
+    <div id="output">
+      <!-- Result will show here -->
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    async function generateSite() {
+      const prompt = document.getElementById("userInput").value;
+      const resultDiv = document.getElementById("output");
+
+      resultDiv.innerHTML = "<p>Generating your website preview...</p>";
+
+      try {
+        const response = await fetch("https://sitecraft-backend.onrender.com/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ prompt: prompt }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data && data.html) {
+          resultDiv.innerHTML = `<iframe srcdoc='${data.html.replace(/'/g, "&apos;")}'></iframe>`;
+        } else {
+          resultDiv.innerHTML = "<p>Something went wrong. No HTML returned.</p>";
+        }
+
+      } catch (error) {
+        console.error("Error:", error);
+        resultDiv.innerHTML = `<p>Oops! An error occurred: ${error.message}</p>`;
+      }
+    }
+  </script>
 </body>
 </html>
