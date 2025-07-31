@@ -1,47 +1,23 @@
-<script>
-  async function generateSite() {
-    const prompt = document.getElementById("userInput").value;
-    const resultDiv = document.getElementById("output");
-    const button = document.getElementById("generateBtn");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SiteCraft AI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>SiteCraft AI</h1>
+    <p>Describe your dream website and we'll build it in seconds.</p>
 
-    resultDiv.innerHTML = "<p>Generating your website preview...</p>";
-    button.disabled = true;
-    button.textContent = "Generating...";
+    <textarea id="userInput" placeholder="e.g. I want a sleek gym website for 'Strong Arms' with black and silver design..."></textarea>
+    <button id="generateBtn">Generate Website</button>
 
-    try {
-      const response = await fetch("https://sitecraft-backend.onrender.com/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: prompt }),
-      });
+    <div id="output" style="margin-top: 2rem;"></div>
+  </div>
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const html = await response.text(); // ✅ changed from .json() to .text()
-
-      resultDiv.innerHTML = `
-        <iframe srcdoc="${html.replace(/"/g, '&quot;')}"></iframe>
-        <button onclick="downloadHTML()">Download HTML</button>
-      `;
-      window.generatedHTML = html;
-    } catch (error) {
-      console.error("Error:", error);
-      resultDiv.innerHTML = `<p>Oops! An error occurred: ${error.message}</p>`;
-    } finally {
-      button.disabled = false;
-      button.textContent = "Generate Website";
-    }
-  }
-
-  function downloadHTML() {
-    const blob = new Blob([window.generatedHTML], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "generated-website.html";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-</script>
+  <!-- Link to your script -->
+  <script src="script.js"></script>
+</body>
+</html>
