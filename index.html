@@ -1,100 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SiteCraft AI</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #111827;
-      color: #f9fafb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
+<script>
+  async function generateSite() {
+    const prompt = document.getElementById("userInput").value;
+    const resultDiv = document.getElementById("output");
+    const button = document.getElementById("generateBtn");
 
-    .container {
-      width: 90%;
-      max-width: 700px;
-      text-align: center;
-    }
+    resultDiv.innerHTML = "<p>Generating your website preview...</p>";
+    button.disabled = true;
+    button.textContent = "Generating...";
 
-    textarea {
-      width: 100%;
-      height: 100px;
-      margin: 20px 0;
-      padding: 10px;
-      font-size: 16px;
-    }
+    try {
+      const response = await fetch("https://sitecraft-backend.onrender.com/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: prompt }),
+      });
 
-    button {
-      padding: 10px 20px;
-      background-color: #3b82f6;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    iframe {
-      width: 100%;
-      height: 600px;
-      border: none;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🛠️ SiteCraft</h1>
-    <p>Your personal website generator using AI.</p>
-
-    <!-- Corrected ID -->
-    <textarea id="userInput" placeholder="Enter a description for your website..."></textarea>
-    <button onclick="generateSite()">Generate Website</button>
-
-    <div id="output">
-      <!-- Result will show here -->
-    </div>
-  </div>
-
-  <script>
-    async function generateSite() {
-      const prompt = document.getElementById("userInput").value;
-      const resultDiv = document.getElementById("output");
-
-      resultDiv.innerHTML = "<p>Generating your website preview...</p>";
-
-      try {
-        const response = await fetch("https://sitecraft-backend.onrender.com/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ prompt: prompt }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data && data.html) {
-          resultDiv.innerHTML = `<iframe srcdoc='${data.html.replace(/'/g, "&apos;")}'></iframe>`;
-        } else {
-          resultDiv.innerHTML = "<p>Something went wrong. No HTML returned.</p>";
-        }
-
-      } catch (error) {
-        console.error("Error:", error);
-        resultDiv.innerHTML = `<p>Oops! An error occurred: ${error.message}</p>`;
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
+
+      const html = await response.text(); // ✅ changed from .json() to .text()
+
+      resultDiv.innerHTML = `
+        <iframe srcdoc="${html.replace(/"/g, '&quot;')}"></iframe>
+        <button onclick="downloadHTML()">Download HTML</button>
+      `;
+      window.generatedHTML = html;
+    } catch (error) {
+      console.error("Error:", error);
+      resultDiv.innerHTML = `<p>Oops! An error occurred: ${error.message}</p>`;
+    } finally {
+      button.disabled = false;
+      button.textContent = "Generate Website";
     }
-  </script>
-</body>
-</html>
+  }
+
+  function downloadHTML() {
+    const blob = new Blob([window.generatedHTML], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "generated-website.html";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
