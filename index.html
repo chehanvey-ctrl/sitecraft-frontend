@@ -5,77 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SiteCraft AI</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 2rem;
-      background-color: #f9fafb;
-      color: #111827;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-    }
-    textarea {
-      width: 100%;
-      height: 150px;
-      margin-top: 1rem;
-      padding: 1rem;
-      font-size: 1rem;
-    }
-    button {
-      padding: 0.8rem 1.5rem;
-      margin-top: 1rem;
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      border-radius: 4px;
-    }
-    iframe {
-      width: 100%;
-      height: 80vh;
-      border: none;
-      margin-top: 2rem;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
     <h1>SiteCraft AI</h1>
     <p>Describe your dream website and we'll build it in seconds.</p>
 
-    <textarea id="userInput" placeholder="e.g. I want a portfolio website for Ava, a UX designer who specializes in mobile design..."></textarea>
+    <textarea id="userInput" placeholder="e.g. I want a sleek gym website for 'Strong Arms' with black and silver design..."></textarea>
     <button id="generateBtn">Generate Website</button>
 
-    <iframe id="resultFrame"></iframe>
+    <div id="output" style="margin-top: 2rem;">
+      <h2>Live Preview</h2>
+      <iframe id="previewFrame" style="width:100%;height:600px;border:1px solid #ccc;"></iframe>
+      <button id="downloadBtn" style="margin-top: 1rem;">Download HTML</button>
+    </div>
   </div>
 
-  <script>
-    document.getElementById("generateBtn").addEventListener("click", async () => {
-      const prompt = document.getElementById("userInput").value;
-
-      try {
-        const response = await fetch("https://sitecraft-backend.onrender.com/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ prompt: prompt })
-        });
-
-        const data = await response.json();
-
-        const iframe = document.getElementById("resultFrame");
-        iframe.srcdoc = data.html;  // <- this injects the live site into the frame
-
-      } catch (error) {
-        alert("An error occurred while generating the website.");
-        console.error("Error:", error);
-      }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
