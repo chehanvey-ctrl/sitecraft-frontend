@@ -16,10 +16,23 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      const text = await response.text(); // Try to grab error text
+      throw new Error(`Server error ${response.status}: ${text}`);
+    }
+
+    const contentType = response.headers.get("content-type");
+
+    if (!contentType || !contentType.includes("application/json")) {
+      const text = await response.text();
+      throw new Error(`Expected JSON but got: ${text.substring(0, 100)}`);
     }
 
     const data = await response.json();
+
+    if (!data.html) {
+      throw new Error("No HTML received from backend.");
+    }
+
     const cleanedHTML = data.html.replace(/\\n/g, '\n').replace(/\\"/g, '"');
 
     // ✅ Inject HTML into iframe
@@ -37,7 +50,7 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
 
     outputDiv.innerHTML = "✅ Site generated! Scroll down for preview and download.";
   } catch (error) {
-    console.error(error);
+    console.error("❌ Generation error:", error);
     outputDiv.innerHTML = `❌ Oops! ${error.message}`;
   }
 });
