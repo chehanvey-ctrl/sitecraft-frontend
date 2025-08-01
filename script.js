@@ -1,47 +1,43 @@
-async function generateSite() {
+document.getElementById("generateBtn").addEventListener("click", async () => {
   const prompt = document.getElementById("userInput").value;
-  const resultDiv = document.getElementById("output");
-  const button = document.getElementById("generateBtn");
+  const outputDiv = document.getElementById("output");
+  const previewFrame = document.getElementById("previewFrame");
+  const downloadBtn = document.getElementById("downloadBtn");
 
-  resultDiv.innerHTML = "<p>Generating your website preview...</p>";
-  button.disabled = true;
-  button.textContent = "Generating...";
+  outputDiv.innerHTML = "⏳ Generating your site, hang tight...";
 
   try {
     const response = await fetch("https://sitecraft-backend.onrender.com/generate", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: prompt }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
     });
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const html = await response.text(); // ✅ Now uses .text()
+    const data = await response.json();
+    const cleanedHTML = data.html.replace(/\\n/g, '\n').replace(/\\"/g, '"');
 
-    resultDiv.innerHTML = `
-      <iframe srcdoc="${html.replace(/"/g, '&quot;')}"></iframe>
-      <button onclick="downloadHTML()">Download HTML</button>
-    `;
-    window.generatedHTML = html;
+    // ✅ Inject HTML into iframe
+    previewFrame.srcdoc = cleanedHTML;
+
+    // ✅ Download functionality
+    const blob = new Blob([cleanedHTML], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    downloadBtn.onclick = () => {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sitecraft-generated.html";
+      a.click();
+    };
+
+    outputDiv.innerHTML = "✅ Site generated! Scroll down for preview and download.";
   } catch (error) {
-    console.error("Error:", error);
-    resultDiv.innerHTML = `<p>Oops! An error occurred: ${error.message}</p>`;
-  } finally {
-    button.disabled = false;
-    button.textContent = "Generate Website";
+    console.error(error);
+    outputDiv.innerHTML = `❌ Oops! ${error.message}`;
   }
-}
-
-function downloadHTML() {
-  const blob = new Blob([window.generatedHTML], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "generated-website.html";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-document.getElementById("generateBtn").addEventListener("click", generateSite);
+});
