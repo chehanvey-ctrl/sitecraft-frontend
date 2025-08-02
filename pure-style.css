@@ -1,0 +1,99 @@
+/* === Reset & Base Styles === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+  background: #f5f8fa;
+  color: #333;
+  padding: 2rem;
+}
+
+/* === Layout Container === */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 1.5rem;
+}
+
+/* === Hero Section === */
+.hero {
+  background-image: url('{{ image_url }}');
+  background-size: cover;
+  background-position: center;
+  padding: 8rem 2rem;
+  color: white;
+  text-align: center;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  font-weight: 300;
+  opacity: 0.9;
+}
+
+/* === Section Styles === */
+section {
+  padding: 4rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+}
+
+section:hover {
+  transform: translateY(-4px);
+}
+
+/* === Call-to-Action Buttons === */
+.btn {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #0056b3;
+}
+
+/* === Footer === */
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 3rem;
+  border-top: 1px solid #ddd;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+  .hero p {
+    font-size: 1rem;
+  }
+  section {
+    padding: 2rem 1rem;
+  }
+}
