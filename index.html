@@ -9,16 +9,72 @@
 <body>
   <div class="container">
     <h1>SiteCraft AI</h1>
-    <p>Describe your dream website and we'll build it in seconds.</p>
+    <p>Describe your dream website and choose a build method:</p>
 
-    <textarea id="userInput" placeholder="e.g. I want a sleek gym website for 'Strong Arms' with black and silver design..."></textarea>
+    <textarea id="userInput" placeholder="e.g. A sleek gym site for 'Strong Arms' with black and silver..."></textarea>
+
+    <div style="margin: 1rem 0;">
+      <label>
+        <input type="radio" name="generationType" value="template" checked />
+        Use Template
+      </label>
+      <label style="margin-left: 1rem;">
+        <input type="radio" name="generationType" value="pure" />
+        Full AI Generation
+      </label>
+    </div>
+
     <button id="generateBtn">Generate Website</button>
 
-    <div id="output"></div>
-    <iframe id="previewFrame" style="width:100%; height:500px; border:1px solid #ccc; margin-top:20px;"></iframe>
-    <button id="downloadBtn">Download HTML</button>
+    <div id="output" style="margin-top: 2rem;"> </div>
+
+    <iframe id="previewFrame" style="width: 100%; height: 600px; border: none; border-radius: 8px; margin-top: 2rem;"></iframe>
+    <button id="downloadBtn" style="margin-top: 1rem;">Download Website</button>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    document.getElementById("generateBtn").addEventListener("click", async () => {
+      const prompt = document.getElementById("userInput").value;
+      const outputDiv = document.getElementById("output");
+      const previewFrame = document.getElementById("previewFrame");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      outputDiv.innerHTML = "⏳ Generating your site, hang tight...";
+
+      // Get generation type (template or pure)
+      const generationType = document.querySelector('input[name="generationType"]:checked').value;
+      const endpoint = generationType === "pure"
+        ? "https://sitecraft-backend.onrender.com/generate-pure"
+        : "https://sitecraft-backend.onrender.com/generate";
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+
+        const cleanedHTML = data.html.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+        previewFrame.srcdoc = cleanedHTML;
+
+        const blob = new Blob([cleanedHTML], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        downloadBtn.onclick = () => {
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "sitecraft-generated.html";
+          a.click();
+        };
+
+        outputDiv.innerHTML = "✅ Site generated! Scroll down for preview and download.";
+      } catch (error) {
+        console.error(error);
+        outputDiv.innerHTML = `❌ Oops! ${error.message}`;
+      }
+    });
+  </script>
 </body>
 </html>
