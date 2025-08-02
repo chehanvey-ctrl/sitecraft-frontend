@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SiteCraft AI</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="pure-style.css" id="pureStyle" disabled />
 </head>
 <body>
   <div class="container">
@@ -38,14 +39,19 @@
       const outputDiv = document.getElementById("output");
       const previewFrame = document.getElementById("previewFrame");
       const downloadBtn = document.getElementById("downloadBtn");
+      const pureStyle = document.getElementById("pureStyle");
 
       outputDiv.innerHTML = "⏳ Generating your site, hang tight...";
 
       // Get generation type (template or pure)
       const generationType = document.querySelector('input[name="generationType"]:checked').value;
-      const endpoint = generationType === "pure"
+      const isPure = generationType === "pure";
+      const endpoint = isPure
         ? "https://sitecraft-backend.onrender.com/generate-pure"
         : "https://sitecraft-backend.onrender.com/generate";
+
+      // Toggle CSS file based on generation type
+      pureStyle.disabled = !isPure;
 
       try {
         const response = await fetch(endpoint, {
@@ -57,7 +63,14 @@
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
 
-        const cleanedHTML = data.html.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+        let cleanedHTML = data.html.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+
+        // If Pure AI, inject the CSS into the HTML file for download
+        if (isPure) {
+          const cssLink = `<link rel="stylesheet" href="pure-style.css">`;
+          cleanedHTML = cleanedHTML.replace('</head>', cssLink + '</head>');
+        }
+
         previewFrame.srcdoc = cleanedHTML;
 
         const blob = new Blob([cleanedHTML], { type: "text/html" });
