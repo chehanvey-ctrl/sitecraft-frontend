@@ -4,10 +4,10 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
   const previewFrame = document.getElementById("previewFrame");
   const downloadBtn = document.getElementById("downloadBtn");
 
-  outputDiv.innerHTML = "⏳ Generating your site, hang tight...";
+  outputDiv.innerHTML = "⏳ Generating your AI-powered site...";
 
   try {
-    const response = await fetch("https://sitecraft-backend.onrender.com/generate", {
+    const response = await fetch("https://sitecraft-backend.onrender.com/generate-pure", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -16,12 +16,11 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
     });
 
     if (!response.ok) {
-      const text = await response.text(); // Try to grab error text
+      const text = await response.text();
       throw new Error(`Server error ${response.status}: ${text}`);
     }
 
     const contentType = response.headers.get("content-type");
-
     if (!contentType || !contentType.includes("application/json")) {
       const text = await response.text();
       throw new Error(`Expected JSON but got: ${text.substring(0, 100)}`);
@@ -44,11 +43,11 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
     downloadBtn.onclick = () => {
       const a = document.createElement("a");
       a.href = url;
-      a.download = "sitecraft-generated.html";
+      a.download = "sitecraft-ai-site.html";
       a.click();
     };
 
-    outputDiv.innerHTML = "✅ Site generated! Scroll down for preview and download.";
+    outputDiv.innerHTML = "✅ Your AI site is ready! Scroll down to preview or download it.";
   } catch (error) {
     console.error("❌ Generation error:", error);
     outputDiv.innerHTML = `❌ Oops! ${error.message}`;
