@@ -1,110 +1,176 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SiteCraft AI</title>
-  <link rel="stylesheet" href="pure-style.css" />
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      background: linear-gradient(to bottom, #000000, #1a1a1a);
-      color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+      color: #f0f0f0;
     }
+
     .container {
       max-width: 800px;
-      margin: 0 auto;
+      margin: 3rem auto;
       padding: 2rem;
-      text-align: center;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
     }
+
     h1 {
       font-size: 2.5rem;
+      text-align: center;
       margin-bottom: 0.5rem;
+      color: #ffffff;
     }
-    p.description {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-      color: #ccc;
+
+    p {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #c2c2c2;
     }
+
     textarea {
       width: 100%;
       padding: 1rem;
       font-size: 1rem;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       margin-bottom: 1rem;
-      background-color: #1e1e1e;
+      resize: vertical;
+      background: #1e1e1e;
       color: #fff;
     }
+
     button {
-      background-color: #00bfff;
-      color: white;
+      display: block;
+      margin: 1rem auto;
       padding: 0.75rem 1.5rem;
-      font-size: 1rem;
+      background-color: #00f260;
+      background-image: linear-gradient(45deg, #00f260, #0575e6);
       border: none;
-      border-radius: 6px;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: transform 0.2s ease;
     }
+
     button:hover {
-      background-color: #009acd;
+      transform: scale(1.05);
     }
+
     iframe {
-      width: 100%;
-      height: 600px;
+      margin-top: 2rem;
       border: none;
       border-radius: 8px;
-      margin-top: 2rem;
+      width: 100%;
+      height: 600px;
     }
-    .instructions {
-      font-size: 0.95rem;
+
+    #output {
       margin-top: 2rem;
-      color: #bbb;
+      font-size: 1rem;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    #progressContainer {
+      margin-top: 1rem;
+      height: 10px;
+      width: 100%;
+      background: #333;
+      border-radius: 5px;
+      overflow: hidden;
+      display: none;
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #00f260, #0575e6);
+      transition: width 0.3s ease;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Welcome to SiteCraft AI</h1>
-    <p class="description">Just describe your dream website in the box below. Our AI will instantly build a live, downloadable website — no coding required!</p><textarea id="userInput" placeholder="e.g. A modern portfolio site for a UX designer named Sam, with muted colours and soft animations..."></textarea>
+    <h1>SiteCraft AI</h1>
+    <p>Describe your dream website and let AI build it from scratch.</p>
 
-<button id="generateBtn">✨ Generate My Website</button>
+    <textarea id="userInput" rows="4" placeholder="e.g. A minimalist yoga studio website with earthy tones and calming visuals..."></textarea>
 
-<div id="output" style="margin-top: 2rem;"></div>
+    <button id="generateBtn">Generate Website</button>
 
-<iframe id="previewFrame"></iframe>
-<button id="downloadBtn" style="margin-top: 1rem;">⬇ Download Website</button>
+    <div id="progressContainer">
+      <div id="progressBar"></div>
+    </div>
 
-<div class="instructions">
-  <p><strong>Next steps after download:</strong></p>
-  <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
-    <li>🔍 Open the downloaded file to preview your site offline</li>
-    <li>🌍 Want to go live? Upload it to Netlify, Vercel, or your web hosting provider</li>
-    <li>🎨 You can further edit the HTML if needed using any code editor</li>
-  </ul>
-</div>
+    <div id="output"></div>
 
-  </div>  <script>
+    <iframe id="previewFrame"></iframe>
+
+    <button id="downloadBtn">Download Website</button>
+  </div>
+
+  <script>
     document.getElementById("generateBtn").addEventListener("click", async () => {
       const prompt = document.getElementById("userInput").value;
       const outputDiv = document.getElementById("output");
       const previewFrame = document.getElementById("previewFrame");
       const downloadBtn = document.getElementById("downloadBtn");
+      const progressContainer = document.getElementById("progressContainer");
+      const progressBar = document.getElementById("progressBar");
 
-      outputDiv.innerHTML = "⏳ Generating your site, hang tight...";
+      outputDiv.innerHTML = "⏳ Generating your AI-powered site...";
+      progressContainer.style.display = "block";
+      progressBar.style.width = "0%";
+
+      // Simulate progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        if (progress < 95) {
+          progress += 1;
+          progressBar.style.width = progress + "%";
+        }
+      }, 100);
 
       try {
         const response = await fetch("https://sitecraft-backend.onrender.com/generate-pure", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({ prompt })
         });
 
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`Server error ${response.status}: ${text}`);
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          throw new Error(`Expected JSON but got: ${text.substring(0, 100)}`);
+        }
+
         const data = await response.json();
 
-        const cleanedHTML = data.html.replace(/\n/g, '\n').replace(/\"/g, '"');
+        if (!data.html) {
+          throw new Error("No HTML received from backend.");
+        }
+
+        clearInterval(interval);
+        progressBar.style.width = "100%";
+
+        const cleanedHTML = data.html.replace(/\\n/g, '\n').replace(/\\"/g, '"');
         previewFrame.srcdoc = cleanedHTML;
 
         const blob = new Blob([cleanedHTML], { type: "text/html" });
@@ -112,15 +178,23 @@
         downloadBtn.onclick = () => {
           const a = document.createElement("a");
           a.href = url;
-          a.download = "sitecraft-generated.html";
+          a.download = "sitecraft-ai-site.html";
           a.click();
         };
 
-        outputDiv.innerHTML = "✅ Site generated! Scroll down to preview and download.";
+        outputDiv.innerHTML = `
+          ✅ Your AI site is ready!<br/>
+          👇 Scroll to preview it live in your browser.<br/>
+          💾 Click "Download Website" to save your full HTML file.<br/>
+          🚀 You can host it instantly using platforms like Netlify, Vercel, or GitHub Pages.
+        `;
       } catch (error) {
-        console.error(error);
+        clearInterval(interval);
+        progressContainer.style.display = "none";
+        console.error("❌ Generation error:", error);
         outputDiv.innerHTML = `❌ Oops! ${error.message}`;
       }
     });
-  </script></body>
+  </script>
+</body>
 </html>
