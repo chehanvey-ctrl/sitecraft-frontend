@@ -3,53 +3,51 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
   const outputDiv = document.getElementById("output");
   const previewFrame = document.getElementById("previewFrame");
   const downloadBtn = document.getElementById("downloadBtn");
+  const progressContainer = document.getElementById("progressContainer");
+  const progressBar = document.getElementById("progressBar");
 
-  outputDiv.innerHTML = "⏳ Generating your AI-powered site...";
+  outputDiv.innerHTML = "⏳ Generating your site, hang tight...";
+  progressContainer.style.display = "block";
+  progressBar.style.width = "0%";
+
+  // Simulated progress
+  let progress = 0;
+  const interval = setInterval(() => {
+    if (progress < 95) {
+      progress += 1;
+      progressBar.style.width = progress + "%";
+    }
+  }, 100);
 
   try {
     const response = await fetch("https://sitecraft-backend.onrender.com/generate-pure", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt })
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`Server error ${response.status}: ${text}`);
-    }
-
-    const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      const text = await response.text();
-      throw new Error(`Expected JSON but got: ${text.substring(0, 100)}`);
-    }
-
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     const data = await response.json();
 
-    if (!data.html) {
-      throw new Error("No HTML received from backend.");
-    }
+    clearInterval(interval);
+    progressBar.style.width = "100%";
 
     const cleanedHTML = data.html.replace(/\\n/g, '\n').replace(/\\"/g, '"');
-
-    // ✅ Inject HTML into iframe
     previewFrame.srcdoc = cleanedHTML;
 
-    // ✅ Download functionality
     const blob = new Blob([cleanedHTML], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     downloadBtn.onclick = () => {
       const a = document.createElement("a");
       a.href = url;
-      a.download = "sitecraft-ai-site.html";
+      a.download = "sitecraft-generated.html";
       a.click();
     };
 
-    outputDiv.innerHTML = "✅ Your AI site is ready! Scroll down to preview or download it.";
+    outputDiv.innerHTML = "✅ Site generated! Scroll down for preview and download.";
   } catch (error) {
-    console.error("❌ Generation error:", error);
+    clearInterval(interval);
+    progressContainer.style.display = "none";
     outputDiv.innerHTML = `❌ Oops! ${error.message}`;
   }
 });
