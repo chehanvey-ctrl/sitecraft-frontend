@@ -151,12 +151,6 @@
           throw new Error(`Server error ${response.status}: ${text}`);
         }
 
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await response.text();
-          throw new Error(`Expected JSON but got: ${text.substring(0, 100)}`);
-        }
-
         const data = await response.json();
 
         if (!data.html) {
@@ -176,7 +170,13 @@
           a.click();
         };
 
-        outputDiv.innerHTML = `✅ Your AI site is ready!<br>👇 Scroll to preview it live in your browser.<br>💾 Click "Download Website" to save your full HTML file.<br>🚀 You can host it instantly using platforms like Netlify, Vercel, or GitHub Pages.`;
+        let outputHTML = `✅ Your AI site is ready!<br>👇 Scroll to preview it live in your browser.<br>💾 Click "Download Website" to save your full HTML file.<br>🚀 You can host it instantly using platforms like Netlify, Vercel, or GitHub Pages.`;
+
+        if (data.live_url) {
+          outputHTML += `<br><br>🌐 <strong><a href="${data.live_url}" target="_blank" style="color:#00e5ff;">View it live on Vercel</a></strong>`;
+        }
+
+        outputDiv.innerHTML = outputHTML;
       } catch (error) {
         clearInterval(interval);
         progressBar.style.display = "none";
