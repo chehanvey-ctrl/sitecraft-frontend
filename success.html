@@ -1,116 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>✅ SiteCraft – Site Deployed!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SiteCraft AI – Success</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      flex-direction: column;
-      background-color: #f0f4f8;
+      background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
+      color: white;
       text-align: center;
       padding: 2rem;
     }
-
-    .card {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-      max-width: 600px;
-      width: 100%;
-    }
-
-    h1 {
-      font-size: 2rem;
-      color: #2e7d32;
-    }
-
-    #siteLink {
-      display: block;
-      margin: 1rem 0;
+    a.button {
+      display: inline-block;
+      margin: 1rem;
+      padding: 1rem 2rem;
+      background: #00d2ff;
+      color: #000;
       font-weight: bold;
-      word-break: break-all;
-      color: #1565c0;
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .btn {
-      background: #1565c0;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      border-radius: 8px;
       text-decoration: none;
-      font-size: 1rem;
     }
-
-    .btn:hover {
-      background: #0d47a1;
-    }
-
-    .copy-msg {
-      color: green;
-      margin-top: 0.5rem;
-      display: none;
+    iframe {
+      margin-top: 2rem;
+      width: 100%;
+      max-width: 800px;
+      height: 600px;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🎉 Your site is live!</h1>
-    <a id="siteLink" href="#" target="_blank">Loading...</a>
+  <h1>🎉 Your Site is Live!</h1>
+  <p>We've successfully deployed your AI-powered site to Vercel.</p>
+  <a id="liveLink" class="button" target="_blank">🌍 View on Vercel</a>
+  <a href="index.html" class="button">🔁 Generate Another</a>
 
-    <div class="buttons">
-      <a id="openBtn" class="btn" target="_blank">Open Live Site</a>
-      <button id="copyBtn" class="btn">Copy URL</button>
-      <a href="index.html" class="btn">🔙 Generate Another</a>
-    </div>
-
-    <div class="copy-msg" id="copyMsg">✅ Link copied to clipboard!</div>
-  </div>
+  <iframe id="previewFrame"></iframe>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const siteURL = params.get("url");
+    const url = params.get("url");
 
-    const siteLink = document.getElementById("siteLink");
-    const openBtn = document.getElementById("openBtn");
-    const copyBtn = document.getElementById("copyBtn");
-    const copyMsg = document.getElementById("copyMsg");
-
-    if (siteURL) {
-      siteLink.href = siteURL;
-      siteLink.textContent = siteURL;
-      openBtn.href = siteURL;
+    if (url) {
+      document.getElementById("liveLink").href = url;
+      document.getElementById("liveLink").textContent = "🌍 View Site Live";
+      document.getElementById("previewFrame").src = url;
     } else {
-      siteLink.textContent = "⚠️ No site URL found.";
-      openBtn.style.display = "none";
-      copyBtn.style.display = "none";
+      document.body.innerHTML = "<h2>❌ No deployment URL found.</h2><a href='index.html' class='button'>Try Again</a>";
     }
-
-    copyBtn.addEventListener("click", () => {
-      navigator.clipboard.writeText(siteURL).then(() => {
-        copyMsg.style.display = "block";
-        setTimeout(() => {
-          copyMsg.style.display = "none";
-        }, 2000);
-      });
-    });
   </script>
 </body>
 </html>
