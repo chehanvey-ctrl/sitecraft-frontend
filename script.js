@@ -4,7 +4,8 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
   const outputDiv = document.getElementById("output");
   const previewFrame = document.getElementById("previewFrame");
   const downloadBtn = document.getElementById("downloadBtn");
-  const progressBar = document.getElementById("progressBarFill");
+  const progressBarContainer = document.getElementById("progressBar");
+  const progressFill = document.getElementById("progressBarFill");
 
   if (!prompt) {
     outputDiv.innerHTML = "❌ Please enter a prompt before generating.";
@@ -12,28 +13,26 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
   }
 
   outputDiv.innerHTML = "⏳ Generating your AI-powered site...";
-  progressBar.style.width = "0%";
+  progressBarContainer.style.display = "block";
+  progressFill.style.width = "0%";
 
-  // Fake loading progress animation
   let progress = 0;
   const interval = setInterval(() => {
     if (progress < 95) {
       progress += Math.random() * 2;
-      progressBar.style.width = `${progress.toFixed(0)}%`;
+      progressFill.style.width = `${progress.toFixed(0)}%`;
     }
   }, 100);
 
   try {
     const response = await fetch("https://sitecraft-backend.onrender.com/generate-pure", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt })
     });
 
     clearInterval(interval);
-    progressBar.style.width = "100%";
+    progressFill.style.width = "100%";
 
     if (!response.ok) {
       const text = await response.text();
@@ -47,15 +46,12 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
     }
 
     const data = await response.json();
-    if (!data.html) {
-      throw new Error("No HTML received from backend.");
-    }
+    if (!data.html) throw new Error("No HTML received from backend.");
 
-    const cleanedHTML = data.html.replace(/\\n/g, '\n').replace(/\\"/g, '"');
-    previewFrame.srcdoc = cleanedHTML;
+    previewFrame.srcdoc = data.html;
 
-    // Download functionality
-    const blob = new Blob([cleanedHTML], { type: "text/html" });
+    // Download file
+    const blob = new Blob([data.html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     downloadBtn.onclick = () => {
       const a = document.createElement("a");
@@ -67,7 +63,8 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
     outputDiv.innerHTML = "✅ Your AI site is ready! Scroll down to preview or download it.";
   } catch (error) {
     clearInterval(interval);
-    progressBar.style.width = "0%";
+    progressBarContainer.style.display = "none";
+    progressFill.style.width = "0%";
     console.error("❌ Generation error:", error);
     outputDiv.innerHTML = `❌ Oops! ${error.message}`;
   }
