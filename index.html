@@ -2,120 +2,132 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SiteCraft AI</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 2rem;
-      background: #f4f6f8;
-      color: #333;
-    }
-    h1 {
-      text-align: center;
-      color: #111;
-    }
-    #userInput {
-      width: 100%;
-      max-width: 600px;
-      padding: 1em;
-      font-size: 1rem;
-      margin: 1em auto;
-      display: block;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    #generateBtn {
-      display: block;
-      margin: 0 auto;
-      padding: 0.75em 2em;
-      font-size: 1rem;
-      background: #007bff;
+      background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
       color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #generateBtn:hover {
-      background: #0056b3;
-    }
-    #output {
-      margin-top: 1.5em;
+      margin: 0;
+      padding: 0;
       text-align: center;
     }
-    #progressBar {
+
+    h1 {
+      font-size: 2.5rem;
+      margin-top: 2rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    textarea {
       width: 100%;
-      max-width: 600px;
-      margin: 1em auto;
-      height: 10px;
-      background: #e0e0e0;
-      border-radius: 5px;
-      overflow: hidden;
-      display: none;
+      height: 120px;
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      resize: vertical;
     }
-    #progressBarFill {
-      height: 100%;
-      width: 0%;
-      background: #28a745;
-      transition: width 0.3s;
+
+    button {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background-color: #00bfff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
+
+    button:hover {
+      background-color: #0099cc;
+    }
+
+    #output {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #ffffff11;
+      border-radius: 8px;
+    }
+
     iframe {
       width: 100%;
-      height: 500px;
-      margin-top: 2em;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      display: block;
-    }
-    #downloadBtn {
-      display: none;
-      margin: 1em auto;
-      padding: 0.5em 1.5em;
-      background: #28a745;
-      color: white;
+      height: 600px;
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      border-radius: 8px;
+      margin-top: 1rem;
     }
-    #downloadBtn:hover {
-      background: #1e7e34;
+
+    #progressBarContainer {
+      width: 100%;
+      background-color: #444;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    #progressFill {
+      height: 16px;
+      width: 0%;
+      background-color: #00ffcc;
+      transition: width 0.4s ease;
+    }
+
+    #vercelLink {
+      margin-top: 1rem;
+      display: none;
+      color: #00ffcc;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>🚀 Build Your Site with AI</h1>
-  <input type="text" id="userInput" placeholder="Describe your website idea..." />
-  <button id="generateBtn">Generate Website</button>
-  <div id="progressBar"><div id="progressBarFill"></div></div>
-  <div id="output"></div>
-  <iframe id="previewFrame"></iframe>
-  <button id="downloadBtn">Download HTML</button>
+  <div class="container">
+    <h1>🚀 SiteCraft AI</h1>
+    <p>Describe the website you want. We’ll build it for you. 👇</p>
+    <textarea id="promptInput" placeholder="e.g. A sleek personal site for a drone photographer..."></textarea>
+    <br />
+    <button onclick="generateSite()">Generate Website</button>
+
+    <div id="progressBarContainer">
+      <div id="progressFill"></div>
+    </div>
+
+    <div id="output"></div>
+    <div id="vercelLink"></div>
+    <iframe id="sitePreview" style="display:none;"></iframe>
+  </div>
 
   <script>
-    document.getElementById("generateBtn").addEventListener("click", async () => {
-      const prompt = document.getElementById("userInput").value.trim();
+    async function generateSite() {
+      const prompt = document.getElementById("promptInput").value;
       const outputDiv = document.getElementById("output");
-      const previewFrame = document.getElementById("previewFrame");
-      const downloadBtn = document.getElementById("downloadBtn");
-      const progressBarContainer = document.getElementById("progressBar");
-      const progressFill = document.getElementById("progressBarFill");
+      const previewFrame = document.getElementById("sitePreview");
+      const vercelLink = document.getElementById("vercelLink");
+      const progressBarContainer = document.getElementById("progressBarContainer");
+      const progressFill = document.getElementById("progressFill");
 
-      if (!prompt) {
-        outputDiv.innerHTML = "❌ Please enter a prompt before generating.";
-        return;
-      }
-
-      outputDiv.innerHTML = "⏳ Generating and publishing your site...";
-      progressBarContainer.style.display = "block";
+      outputDiv.innerHTML = "";
+      previewFrame.style.display = "none";
+      vercelLink.style.display = "none";
       progressFill.style.width = "0%";
+      progressBarContainer.style.display = "block";
 
-      let progress = 0;
+      let width = 0;
       const interval = setInterval(() => {
-        if (progress < 95) {
-          progress += Math.random() * 2;
-          progressFill.style.width = `${progress.toFixed(0)}%`;
-        }
+        if (width >= 90) return;
+        width += 1;
+        progressFill.style.width = width + "%";
       }, 100);
 
       try {
@@ -125,46 +137,25 @@
           body: JSON.stringify({ prompt })
         });
 
+        const data = await response.json();
         clearInterval(interval);
         progressFill.style.width = "100%";
+        setTimeout(() => progressBarContainer.style.display = "none", 500);
 
-        if (!response.ok) {
-          const text = await response.text();
-          throw new Error(`Server error ${response.status}: ${text}`);
-        }
+        outputDiv.innerHTML = "✅ Your AI site is ready!";
+        previewFrame.src = data.vercel_url;
+        previewFrame.style.display = "block";
 
-        const data = await response.json();
-        if (!data.html) throw new Error("No HTML returned from backend.");
-
-        const deployedURL = data.live_url || null;
-        previewFrame.srcdoc = data.html;
-
-        const blob = new Blob([data.html], { type: "text/html" });
-        const url = URL.createObjectURL(blob);
-        downloadBtn.style.display = "inline-block";
-        downloadBtn.onclick = () => {
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "sitecraft-site.html";
-          a.click();
-        };
-
-        outputDiv.innerHTML = "✅ Site generated successfully! Redirecting to live site...";
-
-        if (deployedURL) {
-          setTimeout(() => {
-            window.location.href = `success.html?url=${encodeURIComponent(deployedURL)}`;
-          }, 1500);
-        }
-
+        vercelLink.innerHTML = `🔗 <a href="${data.vercel_url}" target="_blank">View live site on Vercel</a>`;
+        vercelLink.style.display = "block";
       } catch (error) {
         clearInterval(interval);
         progressBarContainer.style.display = "none";
         progressFill.style.width = "0%";
         console.error("❌ Generation error:", error);
-        outputDiv.innerHTML = `❌ Oops! ${error.message}`;
+        outputDiv.innerHTML = "❌ Oops! Something went wrong.";
       }
-    });
+    }
   </script>
 </body>
 </html>
