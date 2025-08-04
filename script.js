@@ -48,9 +48,10 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
     const data = await response.json();
     if (!data.html) throw new Error("No HTML received from backend.");
 
+    const deployedURL = data.site_url || null;
     previewFrame.srcdoc = data.html;
 
-    // Download file
+    // Download functionality
     const blob = new Blob([data.html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     downloadBtn.onclick = () => {
@@ -61,6 +62,14 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
     };
 
     outputDiv.innerHTML = "✅ Your AI site is ready! Scroll down to preview or download it.";
+
+    // 🔁 Redirect to success page with deployed URL
+    if (deployedURL) {
+      setTimeout(() => {
+        window.location.href = `success.html?url=${encodeURIComponent(deployedURL)}`;
+      }, 1500); // Give the user a moment to see the success message
+    }
+
   } catch (error) {
     clearInterval(interval);
     progressBarContainer.style.display = "none";
