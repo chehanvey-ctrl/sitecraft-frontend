@@ -1,100 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SiteCraft - Success!</title>
+  <meta charset="UTF-8">
+  <title>✅ SiteCraft – Site Deployed!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #0f0f0f;
-      color: white;
-      padding: 2rem;
-      text-align: center;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .link-box {
-      background: #1a1a1a;
-      padding: 1rem;
-      border-radius: 10px;
-      margin: 1rem 0;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      word-break: break-all;
-    }
-    .button {
-      background: #00cfff;
-      color: black;
-      border: none;
-      padding: 0.8rem 1.2rem;
-      border-radius: 8px;
-      cursor: pointer;
-      margin: 0.5rem;
-      font-weight: bold;
-    }
-    .button:hover {
-      background: #00e1ff;
-    }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
       justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+      background-color: #f0f4f8;
+      text-align: center;
+      padding: 2rem;
     }
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+
     h1 {
-      color: #00cfff;
+      font-size: 2rem;
+      color: #2e7d32;
     }
-    .footer-cta {
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #888;
+
+    #siteLink {
+      display: block;
+      margin: 1rem 0;
+      font-weight: bold;
+      word-break: break-all;
+      color: #1565c0;
     }
-    a {
-      color: #00cfff;
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      background: #1565c0;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .btn:hover {
+      background: #0d47a1;
+    }
+
+    .copy-msg {
+      color: green;
+      margin-top: 0.5rem;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>✅ Your Website is Live!</h1>
-    <p>We've launched your site to the web. Here's your link:</p>
+  <div class="card">
+    <h1>🎉 Your site is live!</h1>
+    <a id="siteLink" href="#" target="_blank">Loading...</a>
 
-    <div class="link-box">
-      <span id="siteUrl">https://sitecraft-pages.vercel.app/your-site</span>
-      <button class="button" onclick="copyURL()">Copy</button>
+    <div class="buttons">
+      <a id="openBtn" class="btn" target="_blank">Open Live Site</a>
+      <button id="copyBtn" class="btn">Copy URL</button>
+      <a href="index.html" class="btn">🔙 Generate Another</a>
     </div>
 
-    <div class="actions">
-      <button class="button" onclick="window.open(document.getElementById('siteUrl').innerText)">🌐 View Site</button>
-      <button class="button">✏️ Edit Site</button>
-      <button class="button">⬇️ Download HTML</button>
-      <button class="button" onclick="shareSite()">🔗 Share</button>
-    </div>
-
-    <p class="footer-cta">
-      Want to keep or customize this site? <a href="#">Create a free SiteCraft account</a>
-    </p>
+    <div class="copy-msg" id="copyMsg">✅ Link copied to clipboard!</div>
   </div>
 
   <script>
-    function copyURL() {
-      const url = document.getElementById('siteUrl').innerText;
-      navigator.clipboard.writeText(url);
-      alert("Copied to clipboard!");
+    const params = new URLSearchParams(window.location.search);
+    const siteURL = params.get("url");
+
+    const siteLink = document.getElementById("siteLink");
+    const openBtn = document.getElementById("openBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const copyMsg = document.getElementById("copyMsg");
+
+    if (siteURL) {
+      siteLink.href = siteURL;
+      siteLink.textContent = siteURL;
+      openBtn.href = siteURL;
+    } else {
+      siteLink.textContent = "⚠️ No site URL found.";
+      openBtn.style.display = "none";
+      copyBtn.style.display = "none";
     }
 
-    function shareSite() {
-      const url = document.getElementById('siteUrl').innerText;
-      const text = `Check out this awesome site I just made with SiteCraft:\n${url}`;
-      if (navigator.share) {
-        navigator.share({ title: "My AI Website", text, url });
-      } else {
-        alert("Sharing is not supported on this device. Copy the link instead.");
-      }
-    }
+    copyBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(siteURL).then(() => {
+        copyMsg.style.display = "block";
+        setTimeout(() => {
+          copyMsg.style.display = "none";
+        }, 2000);
+      });
+    });
   </script>
 </body>
 </html>
