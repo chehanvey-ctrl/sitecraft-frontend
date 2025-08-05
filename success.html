@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SiteCraft AI – Success</title>
+  <title>SiteCraft AI – Your Site is Live</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -12,45 +12,97 @@
       text-align: center;
       padding: 2rem;
     }
-    a.button {
-      display: inline-block;
-      margin: 1rem;
-      padding: 1rem 2rem;
-      background: #00d2ff;
-      color: #000;
-      font-weight: bold;
-      border-radius: 8px;
-      text-decoration: none;
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
     }
+
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .button {
+      display: inline-block;
+      margin: 1rem 0.5rem;
+      padding: 1rem 2rem;
+      background: #00ffd5;
+      color: #00303f;
+      font-weight: bold;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: background 0.3s ease;
+    }
+
+    .button:hover {
+      background: #00ccb3;
+    }
+
     iframe {
       margin-top: 2rem;
       width: 100%;
-      max-width: 800px;
+      max-width: 900px;
       height: 600px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      background-color: white;
+    }
+
+    #buyNow {
+      background-color: #ffcc00;
+      color: #000;
+      margin-top: 2rem;
+      font-size: 1.3rem;
+      padding: 1.2rem 2.5rem;
+      border-radius: 50px;
+      display: inline-block;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    #buyNow:hover {
+      background-color: #e6b800;
+    }
+
+    .disabled {
+      opacity: 0.5;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
   <h1>🎉 Your Site is Live!</h1>
-  <p>We've successfully deployed your AI-powered site to Vercel.</p>
-  <a id="liveLink" class="button" target="_blank">🌍 View on Vercel</a>
-  <a href="index.html" class="button">🔁 Generate Another</a>
+  <p>Your AI-powered site has been successfully published. Preview it below.</p>
 
+  <a id="liveLink" class="button" target="_blank">🌍 View Site on Vercel</a>
   <iframe id="previewFrame"></iframe>
+
+  <br />
+  <a id="buyNow" href="#" target="_blank">💳 Buy This Website Now</a>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const url = params.get("url");
 
+    const liveLink = document.getElementById("liveLink");
+    const previewFrame = document.getElementById("previewFrame");
+    const buyNow = document.getElementById("buyNow");
+
     if (url) {
-      document.getElementById("liveLink").href = url;
-      document.getElementById("liveLink").textContent = "🌍 View Site Live";
-      document.getElementById("previewFrame").src = url;
+      liveLink.href = url;
+      previewFrame.src = url;
+
+      // Example Gumroad/Stripe/checkout link – replace with your real payment URL
+      const paymentLink = `https://buy.stripe.com/test_checkout_page?site=${encodeURIComponent(url)}`;
+      buyNow.href = paymentLink;
     } else {
-      document.body.innerHTML = "<h2>❌ No deployment URL found.</h2><a href='index.html' class='button'>Try Again</a>";
+      document.body.innerHTML = `
+        <h2>❌ No deployment URL found.</h2>
+        <a href="index.html" class="button">Try Again</a>
+      `;
     }
   </script>
 </body>
