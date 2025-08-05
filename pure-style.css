@@ -8,8 +8,8 @@
 body {
   font-family: 'Poppins', sans-serif;
   line-height: 1.6;
-  background: #f5f8fa;
-  color: #333;
+  background: #f0f4f8;
+  color: #1f2937;
   padding: 2rem;
 }
 
@@ -25,23 +25,28 @@ body {
   background-image: url('{{ image_url }}');
   background-size: cover;
   background-position: center;
-  padding: 8rem 2rem;
+  padding: 7rem 2rem;
   color: white;
   text-align: center;
   border-radius: 1rem;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .hero h1 {
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .hero p {
   font-size: 1.25rem;
   font-weight: 300;
   opacity: 0.9;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* === Section Styles === */
@@ -50,29 +55,30 @@ section {
   margin-bottom: 2rem;
   border-radius: 1rem;
   background: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 section:hover {
   transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 /* === Call-to-Action Buttons === */
 .btn {
   display: inline-block;
-  background: #007bff;
+  background: linear-gradient(135deg, #00c9a7, #007bff);
   color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 2rem;
   border-radius: 50px;
   text-decoration: none;
   font-weight: 600;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   transition: background 0.3s ease;
 }
 
 .btn:hover {
-  background: #0056b3;
+  background: linear-gradient(135deg, #007bff, #0056b3);
 }
 
 /* === Footer === */
@@ -80,9 +86,9 @@ footer {
   text-align: center;
   padding: 2rem 1rem;
   font-size: 0.9rem;
-  color: #777;
+  color: #6b7280;
   margin-top: 3rem;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #e5e7eb;
 }
 
 /* === Responsive === */
@@ -90,10 +96,17 @@ footer {
   .hero h1 {
     font-size: 2rem;
   }
+
   .hero p {
     font-size: 1rem;
+    padding: 0 1rem;
   }
+
   section {
     padding: 2rem 1rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
   }
 }
