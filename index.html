@@ -13,18 +13,15 @@
       padding: 0;
       text-align: center;
     }
-
     h1 {
       font-size: 2.5rem;
       margin-top: 2rem;
     }
-
     .container {
       max-width: 800px;
       margin: 0 auto;
       padding: 2rem;
     }
-
     textarea {
       width: 100%;
       height: 120px;
@@ -34,8 +31,7 @@
       border: none;
       resize: vertical;
     }
-
-    button, a.button-link {
+    button {
       margin-top: 1rem;
       padding: 0.75rem 1.5rem;
       font-size: 1rem;
@@ -46,21 +42,16 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
     }
-
-    button:hover, a.button-link:hover {
+    button:hover {
       background-color: #0099cc;
     }
-
     #output {
       margin-top: 2rem;
       padding: 1rem;
       background-color: #ffffff11;
       border-radius: 8px;
     }
-
     iframe {
       width: 100%;
       height: 600px;
@@ -68,7 +59,6 @@
       border-radius: 8px;
       margin-top: 1rem;
     }
-
     #progressBarContainer {
       width: 100%;
       background-color: #444;
@@ -77,17 +67,25 @@
       margin-top: 1rem;
       display: none;
     }
-
     #progressFill {
       height: 16px;
       width: 0%;
       background-color: #00ffcc;
       transition: width 0.4s ease;
     }
-
     #vercelLink {
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       display: none;
+    }
+    #vercelLink a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: white;
+      color: #000;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-top: 1rem;
     }
   </style>
 </head>
@@ -98,16 +96,13 @@
     <textarea id="promptInput" placeholder="e.g. A sleek personal site for a drone photographer..."></textarea>
     <br />
     <button onclick="generateSite()">Generate Website</button>
-
     <div id="progressBarContainer">
       <div id="progressFill"></div>
     </div>
 
     <div id="output"></div>
+    <div id="vercelLink"></div>
     <iframe id="sitePreview" style="display:none;"></iframe>
-    <div id="vercelLink">
-      <a id="liveSiteBtn" href="#" target="_blank" class="button-link">🌐 Your Live Website</a>
-    </div>
   </div>
 
   <script>
@@ -116,7 +111,6 @@
       const outputDiv = document.getElementById("output");
       const previewFrame = document.getElementById("sitePreview");
       const vercelLink = document.getElementById("vercelLink");
-      const liveSiteBtn = document.getElementById("liveSiteBtn");
       const progressBarContainer = document.getElementById("progressBarContainer");
       const progressFill = document.getElementById("progressFill");
 
@@ -149,9 +143,8 @@
         previewFrame.src = data.live_url;
         previewFrame.style.display = "block";
 
-        liveSiteBtn.href = data.live_url;
+        vercelLink.innerHTML = `<a href="${data.live_url}" target="_blank">Your Live Website</a>`;
         vercelLink.style.display = "block";
-
       } catch (error) {
         clearInterval(interval);
         progressBarContainer.style.display = "none";
