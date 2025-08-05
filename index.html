@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -11,82 +12,83 @@
       margin: 0;
       padding: 0;
       text-align: center;
-    }h1 {
-  font-size: 2.5rem;
-  margin-top: 2rem;
-}
+    }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-}
+    h1 {
+      font-size: 2.5rem;
+      margin-top: 2rem;
+    }
 
-textarea {
-  width: 100%;
-  height: 120px;
-  padding: 1rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: none;
-  resize: vertical;
-}
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
 
-button {
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: white;
-  background-color: #00bfff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      resize: vertical;
+    }
 
-button:hover {
-  background-color: #0099cc;
-}
+    button, a.button-link {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background-color: #00bfff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
 
-#output {
-  margin-top: 2rem;
-  padding: 1rem;
-  background-color: #ffffff11;
-  border-radius: 8px;
-}
+    button:hover, a.button-link:hover {
+      background-color: #0099cc;
+    }
 
-iframe {
-  width: 100%;
-  height: 600px;
-  border: none;
-  border-radius: 8px;
-  margin-top: 1rem;
-}
+    #output {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #ffffff11;
+      border-radius: 8px;
+    }
 
-#progressBarContainer {
-  width: 100%;
-  background-color: #444;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 1rem;
-  display: none;
-}
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
 
-#progressFill {
-  height: 16px;
-  width: 0%;
-  background-color: #00ffcc;
-  transition: width 0.4s ease;
-}
+    #progressBarContainer {
+      width: 100%;
+      background-color: #444;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 1rem;
+      display: none;
+    }
 
-#vercelLink {
-  margin-top: 1rem;
-  display: none;
-  color: #00ffcc;
-  font-weight: bold;
-}
+    #progressFill {
+      height: 16px;
+      width: 0%;
+      background-color: #00ffcc;
+      transition: width 0.4s ease;
+    }
 
+    #vercelLink {
+      margin-top: 1.5rem;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -95,20 +97,26 @@ iframe {
     <p>Describe the website you want. We’ll build it for you in 60 seconds.</p>
     <textarea id="promptInput" placeholder="e.g. A sleek personal site for a drone photographer..."></textarea>
     <br />
-    <button onclick="generateSite()">Generate Website</button><div id="progressBarContainer">
-  <div id="progressFill"></div>
-</div>
+    <button onclick="generateSite()">Generate Website</button>
 
-<div id="output"></div>
-<div id="vercelLink"></div>
-<iframe id="sitePreview" style="display:none;"></iframe>
+    <div id="progressBarContainer">
+      <div id="progressFill"></div>
+    </div>
 
-  </div>  <script>
+    <div id="output"></div>
+    <iframe id="sitePreview" style="display:none;"></iframe>
+    <div id="vercelLink">
+      <a id="liveSiteBtn" href="#" target="_blank" class="button-link">🌐 Your Live Website</a>
+    </div>
+  </div>
+
+  <script>
     async function generateSite() {
       const prompt = document.getElementById("promptInput").value;
       const outputDiv = document.getElementById("output");
       const previewFrame = document.getElementById("sitePreview");
       const vercelLink = document.getElementById("vercelLink");
+      const liveSiteBtn = document.getElementById("liveSiteBtn");
       const progressBarContainer = document.getElementById("progressBarContainer");
       const progressFill = document.getElementById("progressFill");
 
@@ -141,8 +149,9 @@ iframe {
         previewFrame.src = data.live_url;
         previewFrame.style.display = "block";
 
-        vercelLink.innerHTML = `<a href="${data.live_url}" target="_blank">🔗 View Live Site</a>`;
+        liveSiteBtn.href = data.live_url;
         vercelLink.style.display = "block";
+
       } catch (error) {
         clearInterval(interval);
         progressBarContainer.style.display = "none";
@@ -151,5 +160,6 @@ iframe {
         outputDiv.innerHTML = "❌ Oops! Something went wrong.";
       }
     }
-  </script></body>
+  </script>
+</body>
 </html>
